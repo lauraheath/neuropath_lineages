@@ -474,22 +474,22 @@ WGCNA::plotDendroAndColors(tree,
                            groupLabels = colnames(COVARIATES.tmp))
 
 
-### Adjust data with covariates for Network Analysis
-#Identified covariates are regressed out from the expression matrix for network analysis
-# Get design matrix
-DESIGN.NET = getDesignMatrix(COVARIATES[, postAdjustCovars, drop = F], Intercept = F)
-DESIGN.NET = DESIGN.NET$design[,linColumnFinder(DESIGN.NET$design)$indepCols]
-# Estimate voom weights for dispersion control
-cnts = NEW.COUNTS
-cnts[is.na(cnts)] = 0
-VOOM.NET.WEIGHTS = voom(cnts, design=DESIGN.NET, plot=F)
-# Fit linear model using new weights and new design
-VOOM.NET.FIT = lmFit(CQN.GENE_EXPRESSION$E,
-                     design = DESIGN.NET,
-                     weights = VOOM.NET.WEIGHTS$weights)
-# Residuals after normalisation
-RESIDUAL.NET.GENE_EXPRESSION = residuals.MArrayLM(VOOM.NET.FIT,
-                                                  CQN.GENE_EXPRESSION$E)
+# ### Adjust data with covariates for Network Analysis
+# #Identified covariates are regressed out from the expression matrix for network analysis
+# # Get design matrix
+# DESIGN.NET = getDesignMatrix(COVARIATES[, postAdjustCovars, drop = F], Intercept = F)
+# DESIGN.NET = DESIGN.NET$design[,linColumnFinder(DESIGN.NET$design)$indepCols]
+# # Estimate voom weights for dispersion control
+# cnts = NEW.COUNTS
+# cnts[is.na(cnts)] = 0
+# VOOM.NET.WEIGHTS = voom(cnts, design=DESIGN.NET, plot=F)
+# # Fit linear model using new weights and new design
+# VOOM.NET.FIT = lmFit(CQN.GENE_EXPRESSION$E,
+#                      design = DESIGN.NET,
+#                      weights = VOOM.NET.WEIGHTS$weights)
+# # Residuals after normalisation
+# RESIDUAL.NET.GENE_EXPRESSION = residuals.MArrayLM(VOOM.NET.FIT,
+#                                                   CQN.GENE_EXPRESSION$E)
 
 
 
@@ -582,9 +582,9 @@ FIT = lmFit(CQN.GENE_EXPRESSION$E,
             design = DESIGN$design,
             weights = VOOM.WEIGHTS$weights)
 # Fit contrast
-contrast = makeContrasts(contrasts=c("braak_categoryLOW-braak_categoryMED",
-                                     "braak_categoryLOW-braak_categoryHIGH",
-                                     "braak_categoryMED-braak_categoryHIGH"),
+contrast = makeContrasts(contrasts=c("braak_categoryMED-braak_categoryLOW",
+                                     "braak_categoryHIGH-braak_categoryLOW",
+                                     "braak_categoryHIGH-braak_categoryMED"),
                          levels = colnames(FIT$coefficients))
 FIT.CONTR = contrasts.fit(FIT, contrasts=contrast)
 FIT.CONTR = eBayes(FIT.CONTR)
@@ -621,8 +621,8 @@ all.fit = list(braak_category = FIT)
 # # Store differential expression results
 # rbindlist(all.diff.exp, use.names = T, fill = T, idcol = 'Model') %>%
 #   write.table(file = 'braak_results.tsv', sep = '\t', row.names=F, quote=F)
-# 
-# 
+# # 
+# # 
 # braak_results <- read.delim(file="braak_results.tsv")
 
 
@@ -698,18 +698,7 @@ neuropath_results <- read.delim(file="neuropath_results.tsv")
 
 #store differential expression results in synapse space for neuropath-based lineage
 write.csv(neuropath_results, file='RNAseq_DLPFCneuropath_DE_genes.csv', row.names = FALSE)
-file <- synapser::File(path='RNAseq_DLPFCneuropath_DE_genes.csv', parentId='syn27254960')
+file <- synapser::File(path='RNAseq_DLPFCneuropath_DE_genes.csv', parentId='syn28712312')
 file <- synapser::synStore(file)
-
-
-
-
-
-
-
-
-
-
-
 
 
